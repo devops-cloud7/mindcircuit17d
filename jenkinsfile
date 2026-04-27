@@ -1,0 +1,30 @@
+pipeline{
+		agent any
+		
+				stages {
+						stage('checkout'){
+							steps {
+								echo 'git checkout stage'
+								checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/devops-cloud7/mindcircuit17d.git']])
+							}
+						
+						}
+						stage('build'){
+							steps {
+								echo 'building with maven'
+								sh 'mvn clean install'
+							}
+						
+						}
+						stage('deploy'){
+							steps {
+								echo 'deploy with tomcat'
+								deploy adapters: [tomcat9(alternativeDeploymentContext: '', credentialsId: 'tomcat', path: '', url: 'http://100.26.29.72:8090/')], contextPath: 'flanger', war: '**/*.war'
+							}
+						
+						}
+				
+				
+				}
+						
+}
